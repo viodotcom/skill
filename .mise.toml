@@ -1,0 +1,13 @@
+[tools]
+node = "22"
+
+[tasks.zip]
+description = "Create skill zip for upload"
+run = """
+rm -rf /tmp/vio-skill-zip vio.zip
+mkdir -p /tmp/vio-skill-zip/vio
+cp SKILL.md /tmp/vio-skill-zip/vio/
+cp -r references /tmp/vio-skill-zip/vio/
+cd /tmp/vio-skill-zip && zip -r "$OLDPWD/vio.zip" vio/
+rm -rf /tmp/vio-skill-zip
+"""

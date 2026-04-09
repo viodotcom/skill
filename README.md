@@ -6,8 +6,8 @@ A portable skill for AI agents that provides conversational hotel search via the
 
 The `/vio` skill teaches agents to use two MCP tools:
 
-- **`search_hotels`** — Discover hotels by location, coordinates, or name. Supports filters (star rating, amenities, property type, price range), sorting, and pagination.
-- **`get_hotels`** — Fetch detailed data for specific hotels: reviews, rooms, FAQ, policies, price analytics, and more.
+- `**search_hotels**` — Discover hotels by location, coordinates, or name. Supports filters (star rating, amenities, property type, price range), sorting, and pagination.
+- `**get_hotels**` — Fetch detailed data for specific hotels: reviews, rooms, FAQ, policies, price analytics, and more.
 
 ## How It Works
 
@@ -38,9 +38,9 @@ Or build locally: `mise run zip`
 1. Download `vio.zip` from [Releases](https://github.com/viodotcom/mcp-skill/releases)
 2. Go to **Customize → Skills** and upload `vio.zip`
 3. Enable the skill
-4. Add the Vio MCP server under **Customize → Integrations → MCP**:
-   - **Type:** HTTP
-   - **URL:** `https://mcp.vio.com/mcp?api_key=YOUR_API_KEY`
+4. Add the Vio MCP server under **Customize → Connectors**:
+  - **Type:** HTTP
+  - **URL:** `https://mcp.vio.com/mcp?api_key=YOUR_API_KEY`
 5. Start a conversation and try: "Find hotels in Amsterdam for next weekend"
 
 ### OpenClaw
@@ -123,11 +123,13 @@ https://mcp.vio.com/mcp?api_key=YOUR_API_KEY
 ## Usage
 
 Invoke the skill directly:
+
 ```
 /vio Paris, 3 nights in July, budget under 150 EUR
 ```
 
 Or let the agent trigger it automatically when you mention hotel search:
+
 ```
 Find me a 4-star hotel in Amsterdam with a pool
 ```

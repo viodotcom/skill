@@ -1,4 +1,4 @@
-# Vio MCP Skill
+# Vio Skill
 
 A portable skill for AI agents that provides conversational hotel search via the [Vio MCP server](https://mcp.vio.com/docs/). Search hotels, compare prices, read reviews, and explore room options through natural conversation.
 

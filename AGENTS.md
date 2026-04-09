@@ -24,7 +24,7 @@ This is the Vio MCP Skill — a portable skill that teaches AI agents how to sea
 - Write in **imperative form**, not second person ("Search for hotels" not "You should search")
 - The `description` field in frontmatter must use **third person** with specific trigger phrases
 - Tool schemas live in `references/tool-reference.md` — update this when the MCP server tools change
-- Source of truth for tool schemas: `src/mcp/tools/schemas/` in the [Andromeda](https://github.com/viodotcom/Andromeda) repo
+- Source of truth for tool schemas: the Vio MCP server (`https://mcp.vio.com/docs/`)
 
 ## Testing
 

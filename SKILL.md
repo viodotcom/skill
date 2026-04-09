@@ -100,7 +100,9 @@ Use `searchMode: 'fast'` (default) for initial searches — it returns results q
 
 Before presenting, rank hotels by how well they match the user's expressed intent. Consider what they asked for — destination, vibe, priorities, constraints, occasion, budget — and reorder results so the best matches come first. Use all available data to inform the ranking: location, rating, classification, facilities, analytics, insights, and any other signals in the response. Analytics (price vs similar hotels) and insights (review summaries) tend to carry strong signal.
 
-Group the ranked hotels into 2-3 categories based on the data (e.g., "Best Value", "Top Rated", "Central Location", "Luxury Picks"). Place the strongest-match category first.
+**Partial matches:** When filters are active, some hotels may have `isPartialMatch: true` — they matched some but not all requested filters. Always rank full matches above partial matches. When presenting partial matches, be transparent: mention which requested filters they don't meet (e.g., "doesn't have a pool but scores high on everything else you asked for"). If the results are mostly partial matches, explain why — the filter combination may be uncommon in that market (e.g., "2-star hotels with a pool are rare in Amsterdam — these are the closest matches"). Never present a partial match as if it fully satisfies the user's criteria.
+
+Group the ranked hotels into 2-3 categories based on the data (e.g., "Best Value", "Top Rated", "Central Location", "Luxury Picks"). Place the strongest-match category first. When there's a mix of full and partial matches, use this to inform grouping — e.g., a "Full Match" or "Closest to What You Asked" category first, followed by a "Worth Considering" category for strong partial matches.
 
 For each category, write a `##` heading (2-4 words max), then a short paragraph (2-3 sentences) describing why these hotels are grouped together. Bold key attributes — star ratings, amenities, neighborhoods, guest rating ranges — so users can scan quickly.
 
@@ -113,7 +115,7 @@ After the category description, list each hotel in this format:
 - [match points tied to user intent]
 ```
 
-The last line should explain why this hotel fits (or doesn't) what the user asked for, in plain language. Tie it back to their expressed intent — e.g., "walking distance to the historic centre", "rooftop pool fits the honeymoon vibe", "priced 15% below similar hotels". Include negative match points when relevant — e.g., "farther from the beach than you described".
+The last line should explain why this hotel fits (or doesn't) what the user asked for, in plain language. Tie it back to their expressed intent — e.g., "walking distance to the historic centre", "rooftop pool fits the honeymoon vibe", "priced 15% below similar hotels". Include negative match points when relevant — e.g., "farther from the beach than you described". For partial matches, explicitly note the missing filter — e.g., "no pool, but strong on location and price".
 
 Rules:
 - Every hotel must appear in exactly one category — never repeat a hotel across categories

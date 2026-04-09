@@ -2,6 +2,18 @@
 
 Complete parameter schemas and response structures for the Vio hotel search MCP tools.
 
+## Key Concepts
+
+| Term | Meaning |
+|------|---------|
+| **Provider** | A booking platform that supplies offers (each offer has a `providerCode` and `providerName`). A single hotel can have offers from multiple providers at different prices. |
+| **Anchor hotel** | When searching by hotel name, the matched hotel is the anchor (`isAnchorHotel: true`). The remaining results are similar alternatives. `anchorHotelIds` lists the anchor IDs for quick reference. |
+| **Partial match** | `isPartialMatch: true` means the hotel matched some but not all applied filters. Surface this to the user so they know why the hotel doesn't fully meet their criteria. |
+| **Themes vs sentiments** | Both live under `classification`. **Themes** describe what the hotel is for (Beach, Business, Romantic). **Sentiments** describe how it feels (Modern, Charming, Trendy). |
+| **priceScope** | Whether prices are `per_room` (one room) or `all_rooms_combined` (total for all rooms in the configuration). Do not multiply `per_room` prices by the number of rooms — the scope already tells you what the number represents. |
+| **priceLogic** | What is included in `displayPrice`: `base_tax_fees` (base + taxes + hotel fees), `base_fees` (base + hotel fees, taxes separate), or `base` (base only). Use `displayPrice` as-is — it already reflects this logic. |
+| **typicalPriceRange** | The `min`/`max` price range typically seen for this hotel. Useful for assessing whether a current offer is a good deal. |
+
 ## Tool: `search_hotels`
 
 Search for hotels by location, coordinates, or hotel name. Returns hotel results with configurable data blocks.

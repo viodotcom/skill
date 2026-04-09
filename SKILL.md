@@ -94,7 +94,7 @@ When searching for a specific hotel by name, pass the full hotel name in `querie
 
 For multiple locations or hotels, pass up to 3 queries: `queries: ["Paris", "London"]`.
 
-Use `searchMode: 'fast'` (default) for initial searches — it returns results quickly but may miss some providers. Switch to `searchMode: 'deep'` when the user needs completeness over speed — e.g., "show me all available offers", "I want to make sure I'm getting the best price", or when comparing specific hotels where missing a provider could change the recommendation.
+Use `searchMode: 'fast'` (default) for initial searches — it returns results quickly but may miss some providers (the booking platforms that supply offers). Switch to `searchMode: 'deep'` when the user needs completeness over speed — e.g., "show me all available offers", "I want to make sure I'm getting the best price", or when comparing specific hotels where missing a provider could change the recommendation.
 
 ### 3. Present Results
 

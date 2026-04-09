@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/viodotcom/skill/compare/v0.2.0...v0.3.0) (2026-04-09)
+
+
+### Features
+
+* improve skill guidance for partial matches, anchor hotels, and prompt ([#3](https://github.com/viodotcom/skill/issues/3)) ([5c9757a](https://github.com/viodotcom/skill/commit/5c9757a7c380ef507100b50b90504f2e50e5ef5d))
+
 ## [0.2.0](https://github.com/viodotcom/mcp-skill/compare/v0.1.0...v0.2.0) (2026-04-08)
 
 

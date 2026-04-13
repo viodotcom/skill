@@ -131,6 +131,7 @@ Pass as the `reviews` object (only applies when include contains `review`):
 | `prompt` | `string` | — | User's query in English (strip PII). |
 | `currency` | `string` | auto | ISO 4217 code. Only set when user explicitly requests a currency. |
 | `priceMode` | `enum` | `total` | `total` (entire stay) or `nightly` (per night). |
+| `priceDisplayLogic` | `enum` | `base_tax_fees` | Formula for `displayPrice`. `base` (room rate only), `base_tax` (+ taxes), `base_tax_fees` (+ taxes + hotel fees, fully inclusive), or `auto` (country-based). Concrete modes ignore `userCountry`. |
 | `searchMode` | `enum` | `fast` | `fast` (quick, may be partial) or `deep` (exhaustive, slower). |
 | `optimizeRooms` | `boolean` | — | Find best offer across different room configurations for same total occupancy. |
 
@@ -147,7 +148,7 @@ Pass as the `reviews` object (only applies when include contains `review`):
   "nights": "number",
   "roomConfiguration": [{"adults": 2, "children": [5]}],
   "priceScope": "per_room | all_rooms_combined",
-  "priceLogic": "base_tax_fees | base_fees | base",
+  "priceLogic": "base_tax_fees | base_fees | base_tax | base",
   "hotels": [
     {
       "id": "string",

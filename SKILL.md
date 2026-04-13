@@ -82,6 +82,9 @@ Map user preferences to tool parameters:
 - Star rating → `filters.starRatings` (e.g., "4-star" → `[4]`)
 - Property type → `filters.propertyTypes` (e.g., "apartment" → `["apartment"]`)
 - Budget → `filters.minPrice`/`filters.maxPrice`
+- Price display preference → `priceDisplayLogic` (see below)
+
+**Price display logic:** The tools accept `priceDisplayLogic` to control what `displayPrice` includes: `base` (room rate only), `base_tax` (+ taxes), `base_tax_fees` (+ taxes + hotel fees — fully inclusive total), or `auto` (country-based). The default is `base_tax_fees`, which is what most travellers want, but the user may want to compare against sites that show pre-tax or base-only prices. On the first search in a conversation, briefly check the user's preference alongside (not before) the initial results — e.g., "I'm showing fully-inclusive totals (taxes + hotel fees). Want me to switch to pre-tax or room-rate-only for comparison?" Don't block on the answer; proceed with the default and re-run if they pick something else. Persist their choice for the rest of the conversation. When the user mentions a budget, assume it's an all-in total unless they say otherwise.
 
 ### 2. Initial Search
 
@@ -110,10 +113,21 @@ After the category description, list each hotel in this format:
 
 ```
 ### [name](url)
-- **From:** [currency-symbol][offers.cheapestRate.displayPrice](cheapest-offer-url) (total) or (per night)
+- **From:** [currency-symbol][offers.cheapestRate.displayPrice](cheapest-offer-url) [price-label]
 - **Guest rating:** [rating.overall]/10 — [classification.starRating] stars
 - [match points tied to user intent]
 ```
+
+The `[price-label]` clause must tell the user *what* the price includes and *what span* it covers, based on the response's `priceLogic` and the request's `priceMode`. Build it from two parts:
+
+- **Span** (from `priceMode`): `total` → "total", `nightly` → "per night"
+- **Inclusion** (from response `priceLogic`):
+  - `base_tax_fees` → "incl. taxes & fees"
+  - `base_fees` → "incl. fees, excl. taxes"
+  - `base_tax` → "incl. taxes, excl. hotel fees"
+  - `base` → "room rate only, excl. taxes & fees"
+
+Join as `(<span>, <inclusion>)`, e.g. `(total, incl. taxes & fees)` or `(per night, room rate only, excl. taxes & fees)`. Always show the inclusion clause — never drop it, even for the default — so the user knows exactly what the number represents.
 
 The last line should explain why this hotel fits (or doesn't) what the user asked for, in plain language. Tie it back to their expressed intent — e.g., "walking distance to the historic centre", "rooftop pool fits the honeymoon vibe", "priced 15% below similar hotels". Include negative match points when relevant — e.g., "farther from the beach than you described". For partial matches, explicitly note the missing filter — e.g., "no pool, but strong on location and price".
 
@@ -124,7 +138,7 @@ Rules:
 - Link the price using the `url` from the cheapest offer in `offers.items` (the one tagged `cheapest_offer` or the first item)
 - Use `offers.cheapestRate.displayPrice` for the price value
 - Use currency symbol (e.g., $, €) not code
-- Check the `priceMode` from the request — append "(total)" or "(per night)" after the price accordingly. Default is `total`.
+- Append the `[price-label]` clause (span + inclusion) after the price — see the format block above. Default span is `total`; default inclusion is `incl. taxes & fees` (from `priceLogic: base_tax_fees`).
 
 Note total results and whether more pages are available (`hasMoreResults`).
 
@@ -160,7 +174,8 @@ When the user is ready to book, provide the booking URL from the offer's `url` f
 
 ## Formatting Rules
 
-- Always use `displayPrice` as the primary user-facing price — it respects country-specific tax display rules and the selected price mode
+- Always use `displayPrice` as the primary user-facing price — it honors the request's `priceDisplayLogic` (default `base_tax_fees`, fully inclusive) and the selected price mode
+- Every price shown to the user must be followed by a label that states both the span (`total`/`per night`) and the inclusion (based on the response's `priceLogic`) — never leave the reader guessing whether taxes and fees are in the number
 - Use currency symbols ($, €, £) not codes (USD, EUR, GBP)
 - Link hotel names to the hotel's `url` field
 - Link the cheapest price to the offer's `url` field (booking link)

@@ -82,9 +82,6 @@ Map user preferences to tool parameters:
 - Star rating → `filters.starRatings` (e.g., "4-star" → `[4]`)
 - Property type → `filters.propertyTypes` (e.g., "apartment" → `["apartment"]`)
 - Budget → `filters.minPrice`/`filters.maxPrice`
-- Price display preference → `priceDisplayLogic` (see below)
-
-**Price display logic:** The tools accept `priceDisplayLogic` to control what `displayPrice` includes: `base` (room rate only), `base_tax` (+ taxes), `base_tax_fees` (+ taxes + hotel fees — fully inclusive total), or `auto` (country-based). The default is `base_tax_fees`, which is what most travellers want, but the user may want to compare against sites that show pre-tax or base-only prices. On the first search in a conversation, briefly check the user's preference alongside (not before) the initial results — e.g., "I'm showing fully-inclusive totals (taxes + hotel fees). Want me to switch to pre-tax or room-rate-only for comparison?" Don't block on the answer; proceed with the default and re-run if they pick something else. Persist their choice for the rest of the conversation. When the user mentions a budget, assume it's an all-in total unless they say otherwise.
 
 ### 2. Initial Search
 
@@ -174,7 +171,7 @@ When the user is ready to book, provide the booking URL from the offer's `url` f
 
 ## Formatting Rules
 
-- Always use `displayPrice` as the primary user-facing price — it honors the request's `priceDisplayLogic` (default `base_tax_fees`, fully inclusive) and the selected price mode
+- Always use `displayPrice` as the primary user-facing price — it respects country-specific tax display rules and the selected price mode
 - Every price shown to the user must be followed by a label that states both the span (`total`/`per night`) and the inclusion (based on the response's `priceLogic`) — never leave the reader guessing whether taxes and fees are in the number
 - Use currency symbols ($, €, £) not codes (USD, EUR, GBP)
 - Link hotel names to the hotel's `url` field

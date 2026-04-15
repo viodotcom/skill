@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/viodotcom/skill/compare/v0.3.0...v0.4.0) (2026-04-15)
+
+
+### Features
+
+* Force new release ([bf69cec](https://github.com/viodotcom/skill/commit/bf69cec2f3beb7aa47ca8e6bfd692bda4adeee1e))
+
 ## [0.3.0](https://github.com/viodotcom/skill/compare/v0.2.0...v0.3.0) (2026-04-09)
 
 

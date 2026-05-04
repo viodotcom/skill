@@ -289,6 +289,84 @@ Same structure as `search_hotels` output, but without pagination fields (`totalR
 
 ---
 
+## Tool: `search_hotels_availability`
+
+Returns a price calendar across a date range — for each check-in date in the window, the cheapest rate among the hotels Vio surfaced for the search. Use this for "WHEN should I go?" questions where the user is flexible on dates.
+
+This is a **date-axis** tool. For fixed-date hotel search, use `search_hotels`. For "is this hotel a good deal vs similar?" questions, use `search_hotels` with `include: ["analytic"]`.
+
+### Input Parameters
+
+#### Search Parameters (mutually exclusive — provide exactly one)
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `queries` | `string[]` (1-3) | Location or hotel names |
+| `latitude` + `longitude` | `number` | Coordinate-based search |
+| `nearMe` | `boolean` | User's GPS location |
+| `address` | `string` | Geocoded address |
+| `hotelIds` | `string[]` | Specific hotels (skips internal search) |
+
+#### Date Range
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `startDate` | `string` (YYYY-MM-DD) | today + 15 days | First check-in date in the calendar |
+| `endDate` | `string` (YYYY-MM-DD) | startDate + 14 days | Last check-in date. Maximum range 61 days from startDate. |
+| `nights` | `integer` | 3 | Stay length per check-in date |
+
+#### Other Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `roomsConfiguration` | `object[]` | `[{adults: 2}]` | Same shape as other tools |
+| `maxHotels` | `integer` | 10 | Hotels to include in the calendar (max 10). Values >5 split into parallel batches and merged. |
+| `searchMode` | `enum` | `fast` | `fast` (~5s soft deadline) or `deep` (~22s, more thorough) |
+| `sortField` | `enum` | `popularity` | `popularity`, `price`, `guestRating`, `starRating`, `distance`. **For "cheapest possible trip" intent, pass `price`** — by default the calendar reflects popularity-ranked hotels which can overstate prices vs the actual price floor. |
+| `sortOrder` | `enum` | — | `ascending` or `descending` |
+| `filters` | `object` | — | Same filter shape as `search_hotels` (star ratings, guest rating, facilities, themes, price range, property types) |
+| `currency` | `string` | auto | ISO 4217 |
+| `priceMode` | `enum` | `total` | `total` or `nightly` |
+| `prompt` | `string` | — | User's query in English (strip PII) |
+| `dryRun` | `boolean` | `false` | Validate inputs and return normalized stay metadata without calling the live availability service |
+
+### Output Schema
+
+```json
+{
+  "language": "en",
+  "currency": "EUR",
+  "startDate": "2026-06-01",
+  "endDate": "2026-06-30",
+  "nights": 3,
+  "roomConfiguration": [{"adults": 2}],
+  "priceScope": "all_rooms_combined",
+  "priceLogic": "base_tax_fees",
+  "availability": [
+    {
+      "hotelId": "string",
+      "checkIn": "2026-06-01",
+      "cheapestRate": {
+        "base": 280.0,
+        "taxes": 28.5,
+        "hotelFees": 12.0,
+        "displayPrice": 320.5
+      },
+      "offerCount": 7
+    }
+  ]
+}
+```
+
+The response is a **flat array** of `(hotelId, checkIn)` entries — one per (hotel, date) pair the tool computed a rate for. To get hotel names, locations, and images, call `get_hotels` with the `hotelId` values from the calendar.
+
+### When to use which sort
+
+- **Default popularity** (no `sortField`) — calendar shows rates from the area's popular hotels. Best for "when do quality hotels go on sale?" intent. Stable hotel mix across calls.
+- **`sortField: 'price'`** — calendar reflects the actual price floor. Best for "cheapest possible trip" intent. Surfaces lower-quality options too — combine with `filters.guestRating: [7, 8, 9, 10]` to keep quality reasonable.
+
+---
+
 ## Natural Language to Parameter Mapping
 
 Common user phrases and their parameter equivalents:
@@ -317,7 +395,10 @@ Common user phrases and their parameter equivalents:
 | "next week" | `dayDistance: 7` |
 | "tomorrow" | `dayDistance: 1` |
 | "3 nights" | `nights: 3` |
-| "is it a good deal?" | `include: ["offer", "analytic"]` |
+| "is it a good deal?" | `search_hotels` + `include: ["offer", "analytic"]` |
+| "when should I go?" / "cheapest week" / "best dates" | use `search_hotels_availability` |
+| "show me a price calendar" / "calendar for [city]" | use `search_hotels_availability` |
+| "absolute cheapest" / "lowest price" / "willing to compromise on quality" | `search_hotels_availability` + `sortField: "price"` + `sortOrder: "ascending"` (optional `filters.guestRating: [7, 8, 9, 10]`) |
 
 ## Example Tool Calls
 
@@ -402,6 +483,49 @@ Common user phrases and their parameter equivalents:
   "arguments": {
     "hotelIds": ["hotel_abc123"],
     "include": ["offer", "analytic"]
+  }
+}
+```
+
+### Cheapest dates in a city (date-flexible)
+```json
+{
+  "tool": "search_hotels_availability",
+  "arguments": {
+    "queries": ["Barcelona"],
+    "startDate": "2026-06-01",
+    "endDate": "2026-06-30",
+    "nights": 3,
+    "roomsConfiguration": [{"adults": 2}]
+  }
+}
+```
+
+### Cheapest possible trip — bias toward the price floor
+```json
+{
+  "tool": "search_hotels_availability",
+  "arguments": {
+    "queries": ["Lisbon"],
+    "startDate": "2026-06-01",
+    "endDate": "2026-06-30",
+    "nights": 3,
+    "sortField": "price",
+    "sortOrder": "ascending",
+    "filters": {"guestRating": [7, 8, 9, 10]}
+  }
+}
+```
+
+### Date trends for a known hotel
+```json
+{
+  "tool": "search_hotels_availability",
+  "arguments": {
+    "hotelIds": ["hotel_abc123"],
+    "startDate": "2026-06-01",
+    "endDate": "2026-07-01",
+    "nights": 3
   }
 }
 ```

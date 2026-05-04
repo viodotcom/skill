@@ -133,6 +133,7 @@ Pass as the `reviews` object (only applies when include contains `review`):
 | `priceMode` | `enum` | `total` | `total` (entire stay) or `nightly` (per night). |
 | `searchMode` | `enum` | `fast` | `fast` (quick, may be partial) or `deep` (exhaustive, slower). |
 | `optimizeRooms` | `boolean` | — | Find best offer across different room configurations for same total occupancy. |
+| `dryRun` | `boolean` | `false` | Validate inputs and return the normalized stay metadata without calling the live search service. Useful for testing parameter parsing. |
 
 ### Output Schema
 
@@ -154,6 +155,8 @@ Pass as the `reviews` object (only applies when include contains `review`):
       "name": "string",
       "url": "string (booking page URL)",
       "propertyDescription": "string",
+      "roomsDescription": "string",
+      "phone": "string",
       "isPartialMatch": "boolean (true if only some filters matched)",
       "isAnchorHotel": "boolean (true for the searched hotel in similar search)",
       "typicalPriceRange": {"min": 0, "max": 0},
@@ -232,8 +235,6 @@ Pass as the `reviews` object (only applies when include contains `review`):
       },
       "analytics": {
         "averagePrice": 160, "timeRangeDays": 30,
-        "trend": "up | down | stable",
-        "changePercentage": 5.2,
         "comparisonToSimilar": {
           "differencePercentage": -17,
           "assessment": "cheaper | same | expensive"
@@ -282,6 +283,7 @@ Fetch detailed data for specific hotels by ID. Use after `search_hotels` to get 
 | `media` | `object` | No | Media options: `{maxImages: number}` |
 | `offers` | `object` | No | Offer options (same as search_hotels) |
 | `searchMode` | `enum` | No | `fast` (default) or `deep` |
+| `dryRun` | `boolean` | No | Validate inputs and return the normalized stay metadata without calling the live fetch service. |
 
 ### Output Schema
 

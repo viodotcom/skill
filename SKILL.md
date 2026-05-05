@@ -3,10 +3,12 @@ name: vio
 description: >
   This skill should be used when the user asks to "find hotels", "search hotels",
   "compare hotel prices", "get hotel reviews", "look for accommodation",
-  "check hotel rooms", "find places to stay", or mentions hotel booking,
-  travel planning, or accommodation search. Provides conversational hotel
-  search and detailed hotel information via the Vio MCP server.
-version: 1.0.0
+  "check hotel rooms", "find places to stay", "when to go", "cheapest week",
+  "best dates to visit", or mentions hotel booking, travel planning,
+  date-flexible trip planning, or accommodation search. Provides
+  conversational hotel search, date-flexible price calendars, and detailed
+  hotel information via the Vio MCP server.
+version: 1.1.0
 user-invocable: true
 argument-hint: [destination or question]
 ---
@@ -39,6 +41,11 @@ The user names specific hotels to compare (e.g., "compare Hotel X and Hotel Y").
 ### Lookup
 The user asks about a specific hotel (e.g., "tell me more about...") or a factual follow-up ("does it have parking?"). If the hotel ID is known from a previous search, use `get_hotels`. If not, use `search_hotels` with the hotel name in `queries` to find it first. Respond directly and conversationally — no ranking, no categories.
 
+### Date Discovery
+The user is **flexible on dates** and wants to find when to go (e.g., "when's the cheapest week to visit Barcelona", "should I go in May or June", "show me a price calendar for Tokyo this fall"). Use `search_hotels_availability` to return a per-date calendar of cheapest rates across a window. The response is a flat array of `{hotelId, checkIn, cheapestRate, offerCount}` entries — read it as the date axis, not the hotel axis. Use this only when the user has clear date flexibility; for fixed dates use `search_hotels`.
+
+When the user wants the **absolute cheapest possible trip** (phrases like "cheapest possible", "lowest price", "willing to compromise on quality"), pass `sortField: "price"` with `sortOrder: "ascending"`, optionally combined with `filters: {guestRating: [7, 8, 9, 10]}` to keep quality reasonable. Without this, the calendar reflects rates from popularity-ranked hotels rather than the actual price floor.
+
 ### Surfacing Alternatives
 
 Across any mode, proactively suggest an alternative only when ALL three conditions are met:
@@ -59,6 +66,8 @@ These tools are provided by the **Vio MCP server** (`https://mcp.vio.com/mcp`). 
 **`search_hotels`** (from Vio MCP) — Discover hotels by location, coordinates, or hotel name. Supports semantic filters (facilities, property types, themes), pagination, sorting, and configurable data blocks. Use for initial searches and refinement.
 
 **`get_hotels`** (from Vio MCP) — Fetch detailed data for specific hotel IDs from previous search results. Use to drill down into reviews, rooms, FAQ, policies, or analytics for hotels the user is interested in.
+
+**`search_hotels_availability`** (from Vio MCP) — Date-axis tool. Returns a price calendar across a date range — for each check-in date, the cheapest rate among the hotels Vio surfaced for the search. Use when the user is flexible on dates and wants to compare across them ("cheapest week", "when is X cheaper", "price calendar"). NOT for fixed-date searches (use `search_hotels`) or "is this a good deal vs similar?" questions (use `search_hotels` with `analytics`).
 
 Consult `references/tool-reference.md` for complete parameter schemas and response structures.
 
@@ -164,6 +173,8 @@ When the user asks about a specific hotel, call `get_hotels` with that hotel's I
 | Price trends / deals | `['offer', 'analytic']` |
 
 Combine blocks as needed. Keep requests focused to avoid slow responses.
+
+**Date trends for a known hotel**: when the user asks "when is *this* hotel cheapest?" or "show me a calendar for [hotel]", call `search_hotels_availability` with `hotelIds: [the hotel ID]` instead of `get_hotels` — that gives you a per-date calendar for the specific hotel.
 
 ### 7. Booking
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/viodotcom/skill/compare/v0.4.0...v0.5.0) (2026-05-05)
+
+
+### Features
+
+* add search_hotels_availability tool and cheapest-intent guidance ([#7](https://github.com/viodotcom/skill/issues/7)) ([1bc8dbd](https://github.com/viodotcom/skill/commit/1bc8dbd6b8f1f2257aa2b652f45831b5fb811286))
+
 ## [0.4.0](https://github.com/viodotcom/skill/compare/v0.3.0...v0.4.0) (2026-04-15)
 
 

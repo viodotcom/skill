@@ -22,8 +22,8 @@ The skill goes beyond basic search — it embeds product thinking into every int
 
 ## Prerequisites
 
-- Access to a Vio MCP server endpoint (obtain an API key from Vio)
 - An AI agent that supports the skill format (OpenClaw, Claude Code, or compatible)
+- _Optional:_ a Vio partner API key for higher rate limits. The MCP server is open to anonymous traffic at `https://mcp.vio.com/mcp` — no key required for casual or evaluation use.
 
 ## Download
 
@@ -40,7 +40,8 @@ Or build locally: `mise run zip`
 3. Enable the skill
 4. Add the Vio MCP server under **Customize → Connectors**:
   - **Type:** HTTP
-  - **URL:** `https://mcp.vio.com/mcp?api_key=YOUR_API_KEY`
+  - **URL:** `https://mcp.vio.com/mcp`
+  - For partner-tier rate limits, append your API key: `https://mcp.vio.com/mcp?api_key=YOUR_API_KEY`
 5. Start a conversation and try: "Find hotels in Amsterdam for next weekend"
 
 ### OpenClaw
@@ -61,12 +62,14 @@ cp -r references ~/.agents/skills/vio/
     "servers": {
       "vio": {
         "transport": "streamable-http",
-        "url": "https://mcp.vio.com/mcp?api_key=YOUR_API_KEY"
+        "url": "https://mcp.vio.com/mcp"
       }
     }
   }
 }
 ```
+
+For partner-tier rate limits, append your API key to the URL: `https://mcp.vio.com/mcp?api_key=YOUR_API_KEY`.
 
 3. Restart the gateway and verify:
 
@@ -100,25 +103,28 @@ Configure the MCP server in `.mcp.json` at the plugin root:
 {
   "vio": {
     "type": "http",
-    "url": "https://mcp.vio.com/mcp?api_key=${VIO_API_KEY}"
+    "url": "https://mcp.vio.com/mcp"
   }
 }
 ```
 
-Set the `VIO_API_KEY` environment variable and launch:
+Launch:
 
 ```bash
-export VIO_API_KEY=your-api-key-here
 claude --plugin-dir ./my-plugin
 ```
+
+For partner-tier rate limits, point at `https://mcp.vio.com/mcp?api_key=${VIO_API_KEY}` and `export VIO_API_KEY=your-api-key-here` before launching.
 
 ### Other Agents
 
 Install `SKILL.md` and `references/` into your agent's skill discovery path, then configure the Vio MCP server connection:
 
 ```
-https://mcp.vio.com/mcp?api_key=YOUR_API_KEY
+https://mcp.vio.com/mcp
 ```
+
+Append `?api_key=YOUR_API_KEY` for partner-tier rate limits.
 
 ## Usage
 
